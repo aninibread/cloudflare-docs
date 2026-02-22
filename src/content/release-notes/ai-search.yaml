@@ -3,6 +3,14 @@ link: "/ai-search/platform/release-note/"
 productName: AI Search
 productLink: "/ai-search/"
 entries:
+- publish_date: "2026-02-22"
+    title: AI Search public endpoints now feature default rate limiting and CORS settings
+    description: |-
+      When you enable a public endpoint for an AI Search instance, a default rate limit of 120 requests per minute is now automatically applied to protect your application.
+
+      For `web-crawler` instances, the source domain is also automatically added as an authorized host for CORS. This simplifies making queries to the public endpoint directly from your website. Both of these default settings can be customized.
+
+      Refer to the [Public Endpoints guide](/ai-search/usage/public-endpoints/) to learn more.
   - publish_date: "2026-02-09"
     title: Crawler user agent renamed
     description: |-
@@ -80,13 +88,13 @@ entries:
     description: |-
       The cooldown period between sync jobs has been reduced to 3 minutes, allowing you to trigger syncs more frequently.
   - publish_date: "2025-06-16"
-    title: Rich format file size limit increased to 4 MB
+    title: Rich format file size limit increased to 4â¯MB
     description: |-
-      You can now index rich format files (e.g., PDF) up to 4 MB in size, up from the previous 1 MB limit.
+      You can now index rich format files (e.g., PDF) up to 4â¯MB in size, up from the previous 1â¯MB limit.
   - publish_date: "2025-06-12"
     title: Index processing status displayed on dashboard
     description: |-
-      The dashboard now includes a new “Processing” step for the indexing pipeline that displays the files currently being processed.
+      The dashboard now includes a new âProcessingâ step for the indexing pipeline that displays the files currently being processed.
   - publish_date: "2025-06-12"
     title: Sync AI Search REST API published
     description: |-

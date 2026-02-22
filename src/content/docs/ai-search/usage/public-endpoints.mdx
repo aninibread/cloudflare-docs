@@ -1,0 +1,104 @@
+---
+title: Query with Public Endpoints
+pcx_content_type: how-to
+sidebar:
+  order: 5
+description: Learn how to configure and query an AI Search instance using a publicly accessible endpoint.
+---
+
+import { Render, TabItem, Tabs } from "~/components";
+
+AI Search public endpoints provide a way to query your search instance from client-side applications without needing to expose your Cloudflare API credentials.
+
+A public endpoint is a publicly accessible API endpoint that you can enable for your AI Search instance. The primary use case is to allow a browser-based application, such as a search box on your website, to query your AI Search instance directly. This avoids the need to proxy requests through a backend server just to attach API credentials.
+
+This contrasts with the standard, authenticated [`/ai-search` endpoint](/ai-search/usage/rest-api/#ai-search), which requires a Cloudflare API token with AI Search permissions.
+
+## Query the public endpoint
+
+Once enabled, you can query the public endpoint by sending a `POST` request. No authentication is required.
+
+The endpoint URL has the following structure:
+`https://api.cloudflare.com/client/v4/accounts/<ACCOUNT_ID>/ai-search/instances/<INSTANCE_NAME>/query_public`
+
+The following example shows a `curl` request to a public endpoint.
+
+```bash
+---
+header: Query the public endpoint
+---
+curl -X POST "https://api.cloudflare.com/client/v4/accounts/<ACCOUNT_ID>/ai-search/instances/<INSTANCE_NAME>/query_public" \
+--header "Content-Type: application/json" \
+--data '{
+  "query": "what is workers ai?"
+}'
+```
+
+The response structure is identical to the standard `/ai-search` endpoint response and will contain the generated answer and the source documents used to create it.
+
+## Configure a public endpoint
+
+Public endpoints are disabled by default. You can enable and configure a public endpoint when creating or updating an AI Search instance via the REST API.
+
+To enable the endpoint, set `public_endpoint_params.enabled` to `true`.
+
+```json
+---
+header: Enable a public endpoint
+---
+{
+  "public_endpoint_params": {
+    "enabled": true
+  }
+}
+```
+
+When you enable a public endpoint, you can configure rate limiting and authorized hosts to control access.
+
+### Rate limiting
+
+Rate limiting protects your instance from abuse or unexpected high traffic from public clients. When a client exceeds the configured limit, the API will return a `429 Too Many Requests` error.
+
+If you enable a public endpoint without specifying a `rate_limit`, a default limit of **120 requests per minute** is automatically applied.
+
+To set a custom rate limit, include the `rate_limit` object with the desired `requests` and `period_ms` (period in milliseconds).
+
+The following example sets a rate limit of 100 requests every 30 seconds.
+
+```json
+---
+header: Set a custom rate limit
+---
+{
+  "public_endpoint_params": {
+    "enabled": true,
+    "rate_limit": {
+      "requests": 100,
+      "period_ms": 30000
+    }
+  }
+}
+```
+
+### Authorized hosts (CORS)
+
+When a browser makes a request to a different domain (a cross-origin request), it uses the Cross-Origin Resource Sharing (CORS) mechanism. To allow your website to query the public endpoint directly from the browser, you must add its domain to the list of `authorized_hosts`. The browser will then allow requests from your site's domain to the AI Search API.
+
+For instances with `type: 'web-crawler'`, if the public endpoint is enabled and this array is left empty or undefined, the instance's `source` domain will be automatically added as an authorized host. This simplifies making queries directly from the website you are indexing.
+
+The following example authorizes requests from `example.com` and `docs.example.com`.
+
+```json
+---
+header: Set authorized hosts
+---
+{
+  "public_endpoint_params": {
+    "enabled": true,
+    "authorized_hosts": [
+      "example.com",
+      "docs.example.com"
+    ]
+  }
+}
+```
